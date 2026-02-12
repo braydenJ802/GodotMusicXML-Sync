@@ -12,7 +12,8 @@ class SongData : public Resource {
 
     PackedFloat32Array bpm_map;
     PackedFloat32Array measure_offsets;
-    Dictionary cue_points;
+    Dictionary cues_by_measure;        // Key: int (Measure) -> Value: Array[String]
+    Dictionary cues_by_name;           // Key: String (Name) -> Value: Array[int]
 
 protected:
     static void _bind_methods();
@@ -24,8 +25,13 @@ public:
     void set_measure_offsets(const PackedFloat32Array &v) { measure_offsets = v; }
     PackedFloat32Array get_measure_offsets() const { return measure_offsets; }
 
-    void set_cue_point(const StringName &name, int measure_index) { cue_points[name] = measure_index; }
-    Dictionary get_cue_points() const { return cue_points; }
+    void set_cues_by_measure(const Dictionary &p_cues) { cues_by_measure = p_cues; }
+    Dictionary get_cues_by_measure() const { return cues_by_measure; }
+
+    void set_cues_by_name(const Dictionary &p_cues) { cues_by_name = p_cues; }
+    Dictionary get_cues_by_name() const { return cues_by_name; }
+
+    void add_cue_point(const StringName &name, int measure_index);
 };
 
 }
