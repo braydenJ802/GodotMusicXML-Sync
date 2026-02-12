@@ -10,7 +10,7 @@ class SongData;
 
 class AudioClock : public Node {
     GDCLASS(AudioClock, Node)
-
+    
     Ref<SongData> song_data;
     bool running = false;
     bool looping = false; 

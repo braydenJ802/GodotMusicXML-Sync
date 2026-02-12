@@ -24,7 +24,7 @@ void AudioClock::_bind_methods()
     ClassDB::bind_method(D_METHOD("stop"), &AudioClock::stop);
     ClassDB::bind_method(D_METHOD("is_running"), &AudioClock::is_running);
     ClassDB::bind_method(D_METHOD("is_looping"), &AudioClock::is_looping);
-    
+
     ClassDB::bind_method(D_METHOD("get_song_time"), &AudioClock::get_song_time);
     ClassDB::bind_method(D_METHOD("get_num_measures"), &AudioClock::get_num_measures);
     ClassDB::bind_method(D_METHOD("set_loop_bounds_time", "start", "end"), &AudioClock::set_loop_bounds_time);

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="AudioClock" inherits="Node" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Synchronizes game logic to audio playback time.
+	</brief_description>
+	<description>
+		The AudioClock monitors an [AudioStreamPlayer] and tracks the musical position (Measures and Beats) based on data provided by a [SongData] resource. It handles synchronization between the audio hardware clock and the game loop, and emits signals when musical events occur.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_num_measures" qualifiers="const">
+			<return type="float" />
+			<description>
+				Returns the total number of measures defined in the loaded [SongData].
+			</description>
+		</method>
+		<method name="get_song_time" qualifiers="const">
+			<return type="float" />
+			<description>
+				Returns the current playback position in seconds. If the clock is synced to an AudioStreamPlayer, this reflects the audio DSP time; otherwise, it reflects an internal timer.
+			</description>
+		</method>
+		<method name="is_looping" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if a loop section is currently active.
+			</description>
+		</method>
+		<method name="is_running" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if the clock is currently processing time.
+			</description>
+		</method>
+		<method name="set_loop_bounds_measure">
+			<return type="void" />
+			<param index="0" name="start" type="int" />
+			<param index="1" name="end" type="int" />
+			<description>
+				Sets the loop points using Measure indices. The clock will look up the corresponding timestamps from [member song_data] and enable looping.
+			</description>
+		</method>
+		<method name="set_loop_bounds_time">
+			<return type="void" />
+			<param index="0" name="start" type="float" />
+			<param index="1" name="end" type="float" />
+			<description>
+				Sets the loop points using raw time (in seconds). When the song time reaches [param end], it will seek back to [param start].
+			</description>
+		</method>
+		<method name="start">
+			<return type="void" />
+			<description>
+				Starts the clock. Resets internal timers if no AudioStreamPlayer is connected.
+			</description>
+		</method>
+		<method name="stop">
+			<return type="void" />
+			<description>
+				Stops the clock. No signals will be emitted while stopped.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="audio_player_path" type="NodePath" setter="set_audio_player_path" getter="get_audio_player_path" default="NodePath(&quot;&quot;)">
+			Path to the [AudioStreamPlayer] node that this clock should synchronize with.
+		</member>
+		<member name="song_data" type="SongData" setter="set_song_data" getter="get_song_data">
+			The [SongData] resource containing the BPM map, measure offsets, and cue points for the current track.
+		</member>
+	</members>
+	<signals>
+		<signal name="beat">
+			<param index="0" name="beat_number" type="int" />
+			<description>
+				Emitted every time the clock detects a new beat.
+			</description>
+		</signal>
+		<signal name="marker_passed">
+			<param index="0" name="marker_name" type="StringName" />
+			<description>
+				Emitted when the playback position crosses a measure that contains a specific Cue or Section marker.
+			</description>
+		</signal>
+		<signal name="measure">
+			<param index="0" name="measure_number" type="int" />
+			<description>
+				Emitted every time the clock enters a new measure.
+			</description>
+		</signal>
+	</signals>
+</class>

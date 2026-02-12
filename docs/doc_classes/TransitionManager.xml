@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="TransitionManager" inherits="Node" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Handles the logic for scheduling musical transitions.
+	</brief_description>
+	<description>
+		The TransitionManager listens to the [AudioClock] and waits for specific musical moments before signaling that a change should occur. This decouples the "intent" to switch tracks from the "execution," allowing for musically quantized transitions (e.g., waiting for a specific Bar or Marker).
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="cancel_switch">
+			<return type="void" />
+			<description>
+				Cancels any currently pending transition request.
+			</description>
+		</method>
+		<method name="queue_switch_at_marker">
+			<return type="void" />
+			<param index="0" name="marker_name" type="StringName" />
+			<description>
+				Tells the manager to wait until the [AudioClock] encounters a specific named cue (e.g., "Transition_Point") before emitting the trigger signal.
+			</description>
+		</method>
+		<method name="queue_switch_at_measure">
+			<return type="void" />
+			<param index="0" name="measure_number" type="int" />
+			<description>
+				Tells the manager to wait until the [AudioClock] reaches a specific measure index before emitting the trigger signal.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="clock_path" type="NodePath" setter="set_clock_path" getter="get_clock_path" default="NodePath(&quot;&quot;)">
+			Path to the [AudioClock] node that this manager monitors. The manager will automatically connect to the clock's signals when this path is set.
+		</member>
+	</members>
+	<signals>
+		<signal name="transition_triggered">
+			<param index="0" name="measure_number" type="int" />
+			<param index="1" name="marker_name" type="StringName" />
+			<description>
+				Emitted when the queued condition (Measure or Marker) is met. This signal is typically connected to a high-level director script to perform the actual audio crossfade or state change.
+			</description>
+		</signal>
+	</signals>
+</class>

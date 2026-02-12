@@ -4,17 +4,17 @@
 bpm_map = PackedFloat32Array(120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 140, 140, 140, 140, 140, 140)
 measure_offsets = PackedFloat32Array(0, 2, 4, 6, 8, 10, 12, 13.5, 15, 16.5, 18, 19.285715, 20.571428, 21.857143, 23.142857, 24.428572)
 cues_by_measure = {
-1: ["A"],
-5: ["Transition_Point"],
-7: ["accel."],
-9: ["Transition_Point"],
-14: ["rit."],
-16: ["Transition_Point", "END"]
+1: [&"A"],
+5: [&"Transition_Point"],
+7: [&"accel."],
+9: [&"Transition_Point"],
+14: [&"rit."],
+16: [&"Transition_Point", &"END"]
 }
 cues_by_name = {
-"A": [1],
-"END": [16],
-"Transition_Point": [5, 9, 16],
-"accel.": [7],
-"rit.": [14]
+&"A": [1],
+&"END": [16],
+&"Transition_Point": [5, 9, 16],
+&"accel.": [7],
+&"rit.": [14]
 }

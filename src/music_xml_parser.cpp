@@ -31,8 +31,6 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
     // Temporary storage containers
     PackedFloat32Array bpm_map;
     PackedFloat32Array measure_offsets;
-    Dictionary cues_by_measure;
-    Dictionary cues_by_name;
 
     // Create the Godot XMLParser helper
     Ref<XMLParser> parser;
@@ -167,37 +165,12 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
                     else
                         UtilityFunctions::print(">>> Section: ", text, " (measure ", measure_index, ")");
 
-                    // 1) Fill Measure -> Names (For AudioClock)
-                    if (cues_by_measure.has(measure_index)) 
-                    {
-                        Array cues_list = cues_by_measure[measure_index];
-                        cues_list.append(text);
-                        cues_by_measure[measure_index] = cues_list; 
-                    } 
-                    else 
-                    {
-                        Array cues_list;
-                        cues_list.append(text);
-                        cues_by_measure[measure_index] = cues_list;
-                    }
-
-                    // 2) Fill Name -> Measures (For TransitionManager)
-                    if (cues_by_name.has(text)) 
-                    {
-                        Array cues_list = cues_by_name[text];
-                        cues_list.append(measure_index);
-                        cues_by_name[text] = cues_list;
-                    } 
-                    else 
-                    {
-                        Array cues_list;
-                        cues_list.append(measure_index);
-                        cues_by_name[text] = cues_list;
-                    }
+                    // Save cues
+                    data->add_cue_point(text, measure_index);
                 }
             }
 
-
+            
             // -----------------------------------------------
             // 4. HARMONY (Chords)
             // -----------------------------------------------
@@ -220,8 +193,7 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
     // SAVE DATA TO RESOURCE
     data->set_measure_offsets(measure_offsets);
     data->set_bpm_map(bpm_map);
-    data->set_cues_by_measure(cues_by_measure);
-    data->set_cues_by_name(cues_by_name);
+    // cues already saved
 
     return data;
 }

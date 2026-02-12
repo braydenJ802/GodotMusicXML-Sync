@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="SongData" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Data container for musical timing and structure.
+	</brief_description>
+	<description>
+		A resource that holds the parsed data from a MusicXML file, including tempo changes, measure start times, and structural cue points. This resource is used by [AudioClock] to translate time into musical context.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="add_cue_point">
+			<return type="void" />
+			<param index="0" name="name" type="StringName" />
+			<param index="1" name="measure_index" type="int" />
+			<description>
+				Registers a new cue point. This updates both the measure-based and name-based lookup dictionaries to ensure data consistency.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="bpm_map" type="PackedFloat32Array" setter="set_bpm_map" getter="get_bpm_map" default="PackedFloat32Array()">
+			An array storing the BPM value active at each measure.
+		</member>
+		<member name="cues_by_measure" type="Dictionary" setter="set_cues_by_measure" getter="get_cues_by_measure" default="{}">
+			Lookup dictionary mapping [code]Measure Index (int)[/code] to [code]List of Cue Names (Array[String])[/code]. Used by AudioClock for O(1) realtime checks.
+		</member>
+		<member name="cues_by_name" type="Dictionary" setter="set_cues_by_name" getter="get_cues_by_name" default="{}">
+			Lookup dictionary mapping [code]Cue Name (String)[/code] to [code]List of Measure Indices (Array[int])[/code]. Used by TransitionManager to find jump targets.
+		</member>
+		<member name="measure_offsets" type="PackedFloat32Array" setter="set_measure_offsets" getter="get_measure_offsets" default="PackedFloat32Array()">
+			An array storing the exact start time (in seconds) for every measure in the song.
+		</member>
+	</members>
+</class>
