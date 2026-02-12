@@ -22,7 +22,7 @@ class AudioClock : public Node {
     double loop_start_time = 0.0;
     double loop_end_time = 0.0;
 
-    NodePath audio_player_path; // optional later
+    NodePath audio_player_path;
 
 protected:
     static void _bind_methods();
