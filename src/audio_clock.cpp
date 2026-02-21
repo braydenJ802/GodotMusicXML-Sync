@@ -102,10 +102,15 @@ void AudioClock::set_loop_bounds_measure(int p_start_measure, int p_end_measure)
     {
         // Get the array of starting times for each measure
         PackedFloat32Array offsets = song_data->get_measure_offsets();
-        if (p_start_measure < offsets.size() && p_end_measure < offsets.size()) 
+
+        // Convert Musical Number (1-based) to Array Index (0-based)
+        int start_index = p_start_measure - 1;
+        int end_index = p_end_measure - 1;
+
+        if (start_index >= 0 && end_index < offsets.size() && start_index < end_index) 
         {
             // Look up the time (i.e. translate measures into seconds)
-            set_loop_bounds_time(offsets[p_start_measure], offsets[p_end_measure]);
+            set_loop_bounds_time(offsets[start_index], offsets[end_index]);
         }
     }
 }
@@ -118,7 +123,7 @@ void AudioClock::_process(double delta)
     // Instead of adding delta, we ask the AudioPlayer where it is
     // This prevents "Game Time" (FPS) drifting from "Audio Time" (DPS)
     Node* node = get_node_or_null(audio_player_path);
-    AudioStreamPlayer* audio_player = Object::cast_to<AudioStreamPlayer>(node); // safe cast to audiostreamplayer node
+    AudioStreamPlayer* audio_player = Object::cast_to<AudioStreamPlayer>(node); // safe cast to AudioStreamPlayer node
 
     if (audio_player && audio_player->is_playing()) 
     {
@@ -127,7 +132,7 @@ void AudioClock::_process(double delta)
     }
     else 
     {
-        // Fallback if no is hooked up / currently playing (for testing)
+        // Fallback if nothing is hooked up / currently playing
         song_time += delta;
     }
 
@@ -138,6 +143,14 @@ void AudioClock::_process(double delta)
         if (audio_player)
             audio_player->seek(loop_start_time); // loop
         song_time = loop_start_time;
+
+        // Force reset the measure tracker so Measure Detection notices a new measure
+        current_measure = -1; 
+    }
+
+    // Do not proceed if SongData isn't loaded
+    if (!song_data.is_valid()) {
+        return;
     }
 
     // --- MEASURE DETECTION ---
@@ -174,9 +187,37 @@ void AudioClock::_process(double delta)
                     {
                         StringName marker_name = markers[i];
                         emit_signal("marker_passed", marker_name);
-                        UtilityFunctions::print("Marker passed: ", marker_name);
+                        //UtilityFunctions::print("Marker passed: ", marker_name);
                     }
                 }
+            }
+        }
+    }
+
+    // --- BEAT DETECTION ---
+    if (song_data.is_valid())
+    {
+        // Get the data for the current measure
+        PackedFloat32Array offsets = song_data->get_measure_offsets();
+        PackedFloat32Array bpms = song_data->get_bpm_map();
+
+        if (current_measure < offsets.size() && current_measure < bpms.size())
+        {
+            double measure_start_time = offsets[current_measure];
+            double current_bpm = bpms[current_measure];
+            double seconds_per_beat = 60.0 / current_bpm;
+
+            // Calculate beats passed since the start of this measure
+            double time_in_measure = song_time - measure_start_time; // total time - starting time for this measure
+            int beat_now = (int)(time_in_measure / seconds_per_beat); 
+            // NOTE: If a beat is 0.5s long, and we are 0.5s into the measure, 
+            // then 0.5 / 0.5 = 1 (so we're on beat 1).
+
+            // Emit the signal
+            if (beat_now != current_beat)
+            {
+                current_beat = beat_now;
+                emit_signal("beat", current_beat);
             }
         }
     }

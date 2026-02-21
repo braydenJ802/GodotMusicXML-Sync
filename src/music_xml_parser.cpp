@@ -72,21 +72,23 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
             // -----------------------------------------------
             if (node_name == "measure")
             {
-                // RECORD DATA for this measure
+
+                // Finish the PREVIOUS measure
+                if (measure_index > 0) 
+                {
+                    // CALCULATE DURATION using the variables read from the *previous* measure content
+                    // NOTE: This assumes BPM is Quarter-Note based. Which might need to be modified later!
+                    double seconds_per_beat = 60.0 / current_bpm;
+                    // This uses the 'current_beats_per_measure' that was set 
+                    // while parsing the *content* of the previous measure.
+                    double previous_measure_duration = seconds_per_beat * (double)current_beats_per_measure;
+                    
+                    current_total_time += previous_measure_duration;
+                }
+
+                // RECORD DATA for the start of THIS measure
                 measure_offsets.append(current_total_time);
                 bpm_map.append(current_bpm);
-
-                // CALCULATE DURATION for the *next* measure accumulation
-                // (Beats * 60) / BPM = Seconds per measure
-                
-                // NOTE: This assumes BPM is Quarter-Note based. 
-                // If beat-type is 8 (e.g. 6/8), this math might need a modifier later, 
-                // but for 4/4 and 3/4 this works perfectly.
-                double seconds_per_beat = 60.0 / current_bpm;
-                double measure_duration = seconds_per_beat * (double)current_beats_per_measure;
-
-                // Add to accumulator
-                current_total_time += measure_duration;
 
                 // Log for debugging
                 String measure_number = parser->get_named_attribute_value("number");
@@ -142,8 +144,18 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
             {
                 if (parser->has_attribute("tempo")) 
                 {
-                    current_bpm = parser->get_named_attribute_value("tempo").to_float();
+                    float new_bpm = parser->get_named_attribute_value("tempo").to_float();
+                    current_bpm = new_bpm;
+
                     UtilityFunctions::print(">>> Tempo Change: ", current_bpm);    
+
+                    // Rewrite: Since we just found a new tempo inside the current measure, 
+                    // we must update the entry we just added to the map.
+                    if (bpm_map.size() > 0) 
+                    {
+                        // update current measure's entry
+                        bpm_map.set(bpm_map.size() - 1, current_bpm);
+                    }
                 }
             }
 
@@ -187,6 +199,19 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
 
         }
     }
+
+    // ------------------------------------------------------------
+    // End of Song
+    // Finalize the last measure
+    double seconds_per_beat = 60.0 / current_bpm;
+    double last_measure_duration = seconds_per_beat * (double)current_beats_per_measure;
+    current_total_time += last_measure_duration;
+
+    // We append the final calculated time as the start of the "Next" measure.
+    // This allows us to loop to the very end of the track.
+    measure_offsets.append(current_total_time);
+    bpm_map.append(current_bpm); // Pad the array to match sizes
+    // ------------------------------------------------------------
 
     UtilityFunctions::print("---- Parsing Complete. Total Time: ", current_total_time, "s ----");
 

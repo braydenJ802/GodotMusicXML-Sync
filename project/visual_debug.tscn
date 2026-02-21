@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://s5ydtslc27mb"]
+
+[ext_resource type="Script" uid="uid://bjypedvkncr26" path="res://visual_debug.gd" id="1_v3uj2"]
+
+[node name="VisualDebug" type="Control" unique_id=1842460387]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_v3uj2")
+
+[node name="TimeLabel" type="Label" parent="." unique_id=1026882526]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Measure: -- Beat: --"
+
+[node name="BeatFlash" type="ColorRect" parent="." unique_id=1945841683]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.011000001
+anchor_top = 0.060000002
+anchor_right = 0.055000003
+anchor_bottom = 0.13700001
+offset_left = 0.32799911
+offset_top = 0.11999893
+offset_right = -0.36000443
+offset_bottom = 0.2239914

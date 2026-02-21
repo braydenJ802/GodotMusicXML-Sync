@@ -25,6 +25,7 @@ extends Node
 	#clock.start()
 
 func _ready():
+	print("In main")
 	# 1) Parse the Data
 	var file_path = "res://test_score.musicxml"
 	if FileAccess.file_exists(file_path):
@@ -47,25 +48,15 @@ func _ready():
 		# (This uses the NodePath to find the audio player)
 		audio_clock.set_audio_player_path(audio_player.get_path())
 		
-		# 4) Connect Signals
-		audio_clock.beat.connect(_on_beat)
-		audio_clock.measure.connect(_on_measure)
-		audio_clock.marker_passed.connect(_on_marker)
+		# 4) Test looping (ex: loop through measures 2 - 5 (exclusive; start of 2 - end of 4))
+		audio_clock.set_loop_bounds_measure(2, 5)
 		
-		# 5) Test looping (ex: loop through measures 2 - 4)
-		#audio_clock.set_loop_bounds_measure(2, 4)
-		
-		 # 6) PLAY!
+		 # 5) PLAY!
 		audio_player.play()
 		audio_clock.start()
+		
+		# 6) Tell the Visual Debugger where the Clock is
+		$VisualDebug.clock_path = audio_clock.get_path()
+		
 	else:
 		print("Error: Test MusicXML File not found!")
-
-func _on_beat(beat_num):
-	print("Beat: ", beat_num)
-
-func _on_measure(measure_num):
-	print(">> MEASURE: ", measure_num)
-
-func _on_marker(marker_name):
-	print("** PASSED MARKER: ", marker_name)
