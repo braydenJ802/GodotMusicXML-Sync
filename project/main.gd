@@ -49,7 +49,7 @@ func _ready():
 		audio_clock.set_audio_player_path(audio_player.get_path())
 		
 		# 4) Test looping (ex: loop through measures 2 - 5 (exclusive; start of 2 - end of 4))
-		audio_clock.set_loop_bounds_measure(2, 5)
+		#audio_clock.set_loop_bounds_measure(2, 5)
 		
 		 # 5) PLAY!
 		audio_player.play()

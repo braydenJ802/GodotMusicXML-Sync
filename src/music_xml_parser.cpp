@@ -31,6 +31,7 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
     // Temporary storage containers
     PackedFloat32Array bpm_map;
     PackedFloat32Array measure_offsets;
+    std::vector<int> beats_per_measure_array;
 
     // Create the Godot XMLParser helper
     Ref<XMLParser> parser;
@@ -49,7 +50,9 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
     parser->open_buffer(bytes);
 
 
-    // Loop through the file
+    // =================================================================
+    // PASS 1: READ THE FILE
+    // =================================================================
     while (parser->read() == OK)
     {
         // We only care about "Elements" (opening tags like <measure>)
@@ -59,8 +62,8 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
             
             if (node_name == "part") 
             {
-                // If we have already calculated time (meaning we finished Part 1), stop.
-                if (current_total_time > 0.0) 
+                // Check if we already gathered data for the first track
+                if (bpm_map.size() > 0) 
                 {
                     UtilityFunctions::print("Found second Part (Instrument). Stopping parse to preserve sync.");
                     break; // Breaks out of the while loop entirely
@@ -72,28 +75,10 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
             // -----------------------------------------------
             if (node_name == "measure")
             {
-
-                // Finish the PREVIOUS measure
-                if (measure_index > 0) 
-                {
-                    // CALCULATE DURATION using the variables read from the *previous* measure content
-                    // NOTE: This assumes BPM is Quarter-Note based. Which might need to be modified later!
-                    double seconds_per_beat = 60.0 / current_bpm;
-                    // This uses the 'current_beats_per_measure' that was set 
-                    // while parsing the *content* of the previous measure.
-                    double previous_measure_duration = seconds_per_beat * (double)current_beats_per_measure;
-                    
-                    current_total_time += previous_measure_duration;
-                }
-
-                // RECORD DATA for the start of THIS measure
-                measure_offsets.append(current_total_time);
+                // RECORD DATA 
                 bpm_map.append(current_bpm);
+                beats_per_measure_array.push_back(current_beats_per_measure);
 
-                // Log for debugging
-                String measure_number = parser->get_named_attribute_value("number");
-                UtilityFunctions::print("Measure ", measure_number, " starts at: ", measure_offsets[measure_index], "s");
-                
                 measure_index++;
             }
 
@@ -122,6 +107,12 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
                 if (parser->get_node_type() == XMLParser::NODE_TEXT) 
                 {
                     current_beats_per_measure = parser->get_node_data().to_int();
+
+                    // RETROACTIVE UPDATE:
+                    // Because we read this tag *inside* the measure, we need to 
+                    // update the array entry we just pushed at the start of the measure!
+                    if (beats_per_measure_array.size() > 0)
+                        beats_per_measure_array[beats_per_measure_array.size() - 1] = current_beats_per_measure;
                 }
             }
             // Denominator
@@ -178,7 +169,7 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
                         UtilityFunctions::print(">>> Section: ", text, " (measure ", measure_index, ")");
 
                     // Save cues
-                    data->add_cue_point(text, measure_index);
+                    data->add_cue_point(text, measure_index - 1);
                 }
             }
 
@@ -200,20 +191,24 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
         }
     }
 
-    // ------------------------------------------------------------
-    // End of Song
-    // Finalize the last measure
-    double seconds_per_beat = 60.0 / current_bpm;
-    double last_measure_duration = seconds_per_beat * (double)current_beats_per_measure;
-    current_total_time += last_measure_duration;
+    // =================================================================
+    // PASS 2: SMOOTH OUT ACCEL. AND RIT.
+    // =================================================================
+    Dictionary cues_by_name = data->get_cues_by_name();
 
-    // We append the final calculated time as the start of the "Next" measure.
-    // This allows us to loop to the very end of the track.
-    measure_offsets.append(current_total_time);
-    bpm_map.append(current_bpm); // Pad the array to match sizes
-    // ------------------------------------------------------------
+    interpolate_tempo("accel.", cues_by_name, bpm_map);
+    interpolate_tempo("rit.", cues_by_name, bpm_map);
 
-    UtilityFunctions::print("---- Parsing Complete. Total Time: ", current_total_time, "s ----");
+    // =================================================================
+    // PASS 3: RECALCULATE EXACT TIMESTAMPS
+    // =================================================================
+   double total_time = calculate_measure_offsets(bpm_map, beats_per_measure_array, measure_offsets);
+    
+    // Pad BPM map to match the size of measure_offsets (for the fencepost)
+    bpm_map.append(bpm_map[bpm_map.size() - 1]); 
+
+    UtilityFunctions::print("---- Parsing & Sync Complete. Total Time: ", total_time, "s ----");
+
 
     // SAVE DATA TO RESOURCE
     data->set_measure_offsets(measure_offsets);
@@ -221,4 +216,85 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
     // cues already saved
 
     return data;
+}
+
+
+
+void MusicXMLParser::interpolate_tempo(const String &keyword, const Dictionary &cues, PackedFloat32Array &bpm_map) const 
+{
+    if (!cues.has(keyword)) return;
+
+    Array indices = cues[keyword];
+    
+    for (int i = 0; i < indices.size(); i++) 
+    {
+        int start_idx = indices[i];
+        
+        // Safety check
+        if (start_idx >= bpm_map.size()) continue;
+
+        float start_bpm = bpm_map[start_idx];
+        float target_bpm = start_bpm;
+        int end_idx = -1;
+
+        // DEBUG: Print where we are starting
+        UtilityFunctions::print("--- Interpolating ", keyword, " starting at Measure ", start_idx + 1, " (BPM: ", start_bpm, ") ---");
+
+        // Scan forward to find the target
+        for (int j = start_idx + 1; j < bpm_map.size(); j++) 
+        {
+            // Use a small epsilon for float comparison to be safe
+            if (Math::abs(bpm_map[j] - start_bpm) > 0.001) 
+            {
+                target_bpm = bpm_map[j];
+                end_idx = j;
+                UtilityFunctions::print("    -> Found Target at Measure ", end_idx + 1, " (BPM: ", target_bpm, ")");
+                break;
+            }
+        }
+
+        // Apply linear interpolation
+        if (end_idx > start_idx) 
+        {
+            float bpm_diff = target_bpm - start_bpm;
+            int steps = end_idx - start_idx;
+            float step_amount = bpm_diff / steps;
+            
+            UtilityFunctions::print("    -> Steps: ", steps, " | Amount per step: ", step_amount);
+
+            for (int j = 1; j < steps; j++) 
+            {
+                float new_bpm = start_bpm + (step_amount * j);
+                bpm_map.set(start_idx + j, new_bpm);
+                UtilityFunctions::print("    -> Set Measure ", (start_idx + j) + 1, " to ", new_bpm);
+            }
+        }
+        else
+        {
+            UtilityFunctions::print("    -> ERROR: Could not find a target tempo change for ", keyword);
+        }
+    }
+}
+
+double MusicXMLParser::calculate_measure_offsets(const PackedFloat32Array &bpm_map, const std::vector<int> &beats_per_measure_array, PackedFloat32Array &measure_offsets) const {
+    measure_offsets.clear(); 
+    double final_total_time = 0.0;
+
+    for (int i = 0; i < bpm_map.size(); i++) 
+    {
+        // Record the start time of this measure
+        measure_offsets.append(final_total_time);
+        
+        // Safety check to ensure we have beat data for this measure
+        int beats = (i < beats_per_measure_array.size()) ? beats_per_measure_array[i] : 4;
+        
+        // Calculate the duration of this measure
+        double seconds_per_beat = 60.0 / bpm_map[i];
+        final_total_time += seconds_per_beat * (double)beats;
+    }
+    
+    // Add the "End of Song" / Fencepost marker
+    measure_offsets.append(final_total_time);
+    
+    return final_total_time;
 }

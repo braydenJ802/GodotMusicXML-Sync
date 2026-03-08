@@ -132,7 +132,21 @@ void AudioClock::_process(double delta)
     }
     else 
     {
-        // Fallback if nothing is hooked up / currently playing
+        // --- End of Song Check ---
+        // If the player is not playing, AND we have valid song data,
+        // it probably means the song has finished.
+        if (song_data.is_valid()) {
+            PackedFloat32Array offsets = song_data->get_measure_offsets();
+            // The last entry in offsets is the "End of Song" time.
+            if (offsets.size() > 0 && song_time >= offsets[offsets.size() - 1] - 0.1) {
+                // We're at the end. Stop the clock.
+                running = false; 
+                UtilityFunctions::print("AudioClock: Song finished, stopping clock.");
+                return;
+            }
+        }
+        // If we get here, it means we're in "Test Mode" without an audio player.
+        // Let it run as a stopwatch.
         song_time += delta;
     }
 

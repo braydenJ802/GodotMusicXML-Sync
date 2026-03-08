@@ -1,20 +1,20 @@
 [gd_resource type="SongData" format=3]
 
 [resource]
-bpm_map = PackedFloat32Array(120, 120, 120, 120, 120, 120, 120, 120, 120, 140, 140, 140, 140, 140, 140, 80, 80)
-measure_offsets = PackedFloat32Array(0, 2, 4, 6, 8, 10, 11.5, 13, 14.5, 16, 17.285715, 18.571428, 19.857143, 21.142857, 22.428572, 24.142857, 26.392857)
+bpm_map = PackedFloat32Array(120, 120, 120, 120, 120, 120, 120, 126.666664, 133.33333, 140, 140, 140, 140, 140, 120, 100, 80, 80)
+measure_offsets = PackedFloat32Array(0, 2, 4, 6, 8, 10, 11.5, 13, 14.421053, 15.771052, 17.056767, 18.342482, 19.628195, 20.91391, 22.199625, 24.199625, 25.399624, 26.899624)
 cues_by_measure = {
-1: [&"A"],
-5: [&"Transition_Point"],
-7: [&"accel."],
-9: [&"Transition_Point"],
-14: [&"rit."],
-16: [&"Transition_Point", &"END"]
+0: [&"A"],
+4: [&"Transition_Point"],
+6: [&"accel."],
+8: [&"Transition_Point"],
+13: [&"rit."],
+15: [&"Transition_Point", &"END"]
 }
 cues_by_name = {
-&"A": [1],
-&"END": [16],
-&"Transition_Point": [5, 9, 16],
-&"accel.": [7],
-&"rit.": [14]
+&"A": [0],
+&"END": [15],
+&"Transition_Point": [4, 8, 15],
+&"accel.": [6],
+&"rit.": [13]
 }
