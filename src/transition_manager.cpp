@@ -15,6 +15,9 @@ void TransitionManager::_bind_methods()
     ClassDB::bind_method(D_METHOD("queue_switch_at_marker", "marker_name"), &TransitionManager::queue_switch_at_marker);
     ClassDB::bind_method(D_METHOD("cancel_switch"), &TransitionManager::cancel_switch);
 
+    ClassDB::bind_method(D_METHOD("trigger_transition_immediate"), &TransitionManager::trigger_transition_immediate);
+    ClassDB::bind_method(D_METHOD("is_transition_queued"), &TransitionManager::is_transition_queued);
+
     ADD_SIGNAL(MethodInfo(
         "transition_triggered",
         PropertyInfo(Variant::INT, "measure_number"),
@@ -59,6 +62,22 @@ void TransitionManager::_ready()
     _connect_clock();
 }
 
+void TransitionManager::trigger_transition_immediate()
+{
+    UtilityFunctions::print("Transition triggered IMMEDIATELY (Bypassing quantization).");
+    
+    // We pass -1 and empty string to indicate this wasn't triggered by a specific musical point
+    emit_signal("transition_triggered", -1, StringName());
+    
+    cancel_switch(); // Clear the queue so we don't accidentally switch again later
+}
+
+bool TransitionManager::is_transition_queued() const
+{
+    // Returns true if either a measure or a marker is currently waiting in the queue
+    return (queued_measure >= 0 || !queued_marker.is_empty());
+}
+
 void TransitionManager::_connect_clock() 
 {
     if (!is_inside_tree()) return;
@@ -71,19 +90,19 @@ void TransitionManager::_connect_clock()
         return;
     }
 
-    const StringName sig_measure("measure");
-    const StringName sig_marker("marker_passed");
+    const StringName signal_measure("measure");
+    const StringName signal_marker("marker_passed");
 
     Callable on_measure = callable_mp(this, &TransitionManager::_on_clock_measure);
     Callable on_marker = callable_mp(this, &TransitionManager::_on_clock_marker_passed);
 
-    if (clock->has_signal(sig_measure) && !clock->is_connected(sig_measure, on_measure)) 
+    if (clock->has_signal(signal_measure) && !clock->is_connected(signal_measure, on_measure)) 
     {
-        clock->connect(sig_measure, on_measure);
+        clock->connect(signal_measure, on_measure);
     }
-    if (clock->has_signal(sig_marker) && !clock->is_connected(sig_marker, on_marker)) 
+    if (clock->has_signal(signal_marker) && !clock->is_connected(signal_marker, on_marker)) 
     {
-        clock->connect(sig_marker, on_marker);
+        clock->connect(signal_marker, on_marker);
     }
 
     connected_clock_path = clock_path;
@@ -101,16 +120,16 @@ void TransitionManager::_disconnect_clock()
     Node *old_clock = get_node_or_null(connected_clock_path);
     if (old_clock) 
     {
-        const StringName sig_measure("measure");
-        const StringName sig_marker("marker_passed");
+        const StringName signal_measure("measure");
+        const StringName signal_marker("marker_passed");
 
         Callable on_measure = callable_mp(this, &TransitionManager::_on_clock_measure);
         Callable on_marker = callable_mp(this, &TransitionManager::_on_clock_marker_passed);
 
-        if (old_clock->is_connected(sig_measure, on_measure)) 
-            old_clock->disconnect(sig_measure, on_measure);
-        if (old_clock->is_connected(sig_marker, on_marker)) 
-            old_clock->disconnect(sig_marker, on_marker);
+        if (old_clock->is_connected(signal_measure, on_measure)) 
+            old_clock->disconnect(signal_measure, on_measure);
+        if (old_clock->is_connected(signal_marker, on_marker)) 
+            old_clock->disconnect(signal_marker, on_marker);
     }
 
     connected_clock_path = NodePath();

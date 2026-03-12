@@ -11,16 +11,16 @@ var current_measure: int = 0
 func _ready():
 	# Initial state for the flash
 	beat_flash.modulate.a = 0.0 # Make it invisible at the start
-	print("In Visual Debug")
-	var clock = get_node_or_null(clock_path)
+
+func setup(clock: AudioClock):
 	if clock:
-		# Connect to the C++ signals
+	# Connect to the C++ signals
 		clock.beat.connect(_on_beat)
 		clock.measure.connect(_on_measure)
 		clock.marker_passed.connect(_on_marker)
+		print("VisualDebugger: Successfully connected to AudioClock.")
 	else:
-		print("Debugger Error: AudioClock node not found at path: ", clock_path)
-
+		push_error("VisualDebugger: Provided AudioClock is null!")
 
 func _on_beat(beat_number: int):
 	print("Beat: ", beat_number + 1)

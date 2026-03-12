@@ -1,15 +1,15 @@
 [gd_scene format=3 uid="uid://s5ydtslc27mb"]
 
-[ext_resource type="Script" uid="uid://bjypedvkncr26" path="res://visual_debug.gd" id="1_v3uj2"]
+[ext_resource type="Script" uid="uid://bjypedvkncr26" path="res://scenes/visual_debugger.gd" id="1_jykpe"]
 
-[node name="VisualDebug" type="Control" unique_id=1842460387]
+[node name="VisualDebugger" type="Control" unique_id=1842460387]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_v3uj2")
+script = ExtResource("1_jykpe")
 
 [node name="TimeLabel" type="Label" parent="." unique_id=1026882526]
 layout_mode = 0

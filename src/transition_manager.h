@@ -28,6 +28,9 @@ public:
 
     void _ready() override;
 
+    void trigger_transition_immediate();
+    bool is_transition_queued() const;
+
 private:
     void _connect_clock();
     void _disconnect_clock();

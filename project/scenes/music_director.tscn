@@ -1,8 +1,7 @@
 [gd_scene format=3 uid="uid://bqpbd40v5d1wc"]
 
-[ext_resource type="Script" uid="uid://bx8o7u1qjm1s1" path="res://main.gd" id="1_ig7tw"]
-[ext_resource type="AudioStream" uid="uid://bgp3eblfrjd2x" path="res://audio/test-music.wav" id="2_0xm2m"]
-[ext_resource type="PackedScene" uid="uid://s5ydtslc27mb" path="res://visual_debug.tscn" id="2_h2yge"]
+[ext_resource type="Script" uid="uid://7n46dnp2m3ac" path="res://scenes/music_director.gd" id="1_qkmj8"]
+[ext_resource type="AudioStream" uid="uid://bgp3eblfrjd2x" path="res://audio/test_music.wav" id="3_msqj8"]
 
 [sub_resource type="SongData" id="SongData_0xm2m"]
 bpm_map = PackedFloat32Array(120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 140, 140, 140, 140, 140, 140)
@@ -23,12 +22,10 @@ cues_by_name = {
 &"rit.": [14]
 }
 
-[node name="Main" type="Node" unique_id=380535101]
-script = ExtResource("1_ig7tw")
+[node name="MusicDirector" type="Node" unique_id=380535101]
+script = ExtResource("1_qkmj8")
 
-[node name="VisualDebug" parent="." unique_id=1842460387 instance=ExtResource("2_h2yge")]
-unique_name_in_owner = true
-clock_path = NodePath("../AudioClock")
+[node name="TransitionManager" type="TransitionManager" parent="." unique_id=1189956487]
 
 [node name="AudioClock" type="AudioClock" parent="." unique_id=381154335]
 song_data = SubResource("SongData_0xm2m")
@@ -37,4 +34,4 @@ unique_name_in_owner = true
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1278163139]
 unique_name_in_owner = true
-stream = ExtResource("2_0xm2m")
+stream = ExtResource("3_msqj8")

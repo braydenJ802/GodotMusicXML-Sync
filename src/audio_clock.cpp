@@ -29,6 +29,7 @@ void AudioClock::_bind_methods()
     ClassDB::bind_method(D_METHOD("get_num_measures"), &AudioClock::get_num_measures);
     ClassDB::bind_method(D_METHOD("set_loop_bounds_time", "start", "end"), &AudioClock::set_loop_bounds_time);
     ClassDB::bind_method(D_METHOD("set_loop_bounds_measure", "start", "end"), &AudioClock::set_loop_bounds_measure);
+    ClassDB::bind_method(D_METHOD("clear_loop"), &AudioClock::clear_loop);
 
     ADD_SIGNAL(MethodInfo("beat", PropertyInfo(Variant::INT, "beat_number")));
     ADD_SIGNAL(MethodInfo("measure", PropertyInfo(Variant::INT, "measure_number")));
@@ -38,6 +39,13 @@ void AudioClock::_bind_methods()
 void AudioClock::set_song_data(const Ref<SongData> &p_data) 
 {
     song_data = p_data;
+
+    // Update the measure count
+    // (-1 because the last offset is the end-of-song fencepost)
+    if (song_data.is_valid() && song_data->get_measure_offsets().size() > 0) 
+        num_measures = song_data->get_measure_offsets().size() - 1;
+    else
+        num_measures = 0;
 }
 
 Ref<SongData> AudioClock::get_song_data() const 
@@ -113,6 +121,12 @@ void AudioClock::set_loop_bounds_measure(int p_start_measure, int p_end_measure)
             set_loop_bounds_time(offsets[start_index], offsets[end_index]);
         }
     }
+}
+
+void AudioClock::clear_loop() {
+    looping = false;
+    loop_start_time = 0.0;
+    loop_end_time = 0.0;
 }
 
 void AudioClock::_process(double delta) 

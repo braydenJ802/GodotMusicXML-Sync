@@ -1,4 +1,4 @@
-[gd_resource type="SongData" format=3]
+[gd_resource type="SongData" format=3 uid="uid://cwuh6clfty8cj"]
 
 [resource]
 bpm_map = PackedFloat32Array(120, 120, 120, 120, 120, 120, 120, 126.666664, 133.33333, 140, 140, 140, 140, 140, 120, 100, 80, 80)

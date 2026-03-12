@@ -43,6 +43,7 @@ public:
     double get_num_measures() const;
     void set_loop_bounds_time(double p_start_time, double p_end_time);
     void set_loop_bounds_measure(int p_start_measure, int p_end_measure);
+    void clear_loop();
 
     void _process(double delta) override;
 };

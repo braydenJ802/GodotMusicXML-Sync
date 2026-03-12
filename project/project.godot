@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="GodotMusicXML-Sync"
-run/main_scene="uid://bqpbd40v5d1wc"
+run/main_scene="uid://p18ysghmjbc6"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
