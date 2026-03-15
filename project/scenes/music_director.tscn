@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://bqpbd40v5d1wc"]
 
 [ext_resource type="Script" uid="uid://7n46dnp2m3ac" path="res://scenes/music_director.gd" id="1_qkmj8"]
-[ext_resource type="AudioStream" uid="uid://bgp3eblfrjd2x" path="res://audio/test_music.wav" id="3_msqj8"]
 
 [sub_resource type="SongData" id="SongData_0xm2m"]
 bpm_map = PackedFloat32Array(120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 140, 140, 140, 140, 140, 140)
@@ -31,7 +30,3 @@ script = ExtResource("1_qkmj8")
 song_data = SubResource("SongData_0xm2m")
 audio_player_path = NodePath("/root/@EditorNode@18968/@Panel@14/@VBoxContainer@15/DockHSplitMain/@VBoxContainer@28/DockVSplitCenter/@VSplitContainer@70/@VBoxContainer@71/@EditorMainScreen@125/MainScreen/@CanvasItemEditor@9318/@VSplitContainer@9101/@HSplitContainer@9103/@HSplitContainer@9105/@Control@9106/@SubViewportContainer@9107/@SubViewport@9108/Main/AudioStreamPlayer")
 unique_name_in_owner = true
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1278163139]
-unique_name_in_owner = true
-stream = ExtResource("3_msqj8")

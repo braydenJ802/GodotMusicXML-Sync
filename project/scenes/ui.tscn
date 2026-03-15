@@ -10,6 +10,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="ImmediateButton" type="Button" parent="." unique_id=1905336495]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 40.0
+offset_right = 225.0
+offset_bottom = 71.0
+text = "Immediately jump to MM 10"
+
 [node name="TransitionButton" type="Button" parent="." unique_id=1421725497]
 layout_mode = 0
 offset_right = 8.0
@@ -18,7 +26,7 @@ text = "Jump to MM 10 at TP"
 
 [node name="VisualDebugger" parent="." unique_id=1842460387 instance=ExtResource("1_fyqef")]
 layout_mode = 1
-offset_left = 1.0
-offset_top = 34.0
-offset_right = 1.0
-offset_bottom = 34.0
+offset_left = -3.0
+offset_top = 91.0
+offset_right = -3.0
+offset_bottom = 91.0

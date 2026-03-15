@@ -1,12 +1,15 @@
 class_name MusicDirector
 extends Node
 
-@onready var audio_player: AudioStreamPlayer = $AudioStreamPlayer
 @onready var audio_clock: AudioClock = $AudioClock
 @onready var transition_manager: TransitionManager = $TransitionManager
 
 var song_data: SongData
 var target_destination_measure: int = -1
+var current_audio_stream: AudioStream
+
+# We keep track of the currently playing node so we can fade it out later
+var active_audio_player: AudioStreamPlayer = null
 
 func _ready():
 	transition_manager.set_clock_path(audio_clock.get_path())
@@ -25,10 +28,9 @@ func load_song(xml_path: String, audio_stream: AudioStream):
 	
 	# Feed Data to Clock
 	audio_clock.set_song_data(song_data)
-	audio_clock.set_audio_player_path(audio_player.get_path())
 	
 	# Set the Audio File
-	audio_player.stream = audio_stream
+	current_audio_stream = audio_stream
 	print("MusicDirector: Song loaded successfully.")
 
 func play_measures(start_measure: int, end_measure: int, should_loop: bool = false):
@@ -53,14 +55,14 @@ func play_measures(start_measure: int, end_measure: int, should_loop: bool = fal
 		# Clear any old loops so the song just plays straight through
 		audio_clock.clear_loop()
 	
-	# Execute playback
-	audio_player.play(start_time_seconds)
+	# Spawn a new audio player dynamically
+	_spawn_new_audio_player(start_time_seconds, 0.0) # 0.0 fade means instant
 	audio_clock.start()
 
 func play_full_song():
 	# A function for convenience to just play the track from the very beginning natively
 	audio_clock.clear_loop()
-	audio_player.play(0.0)
+	#audio_player.play(0.0)
 	audio_clock.start()
 
 func request_jump_to_measure(wait_for_measure: int, destination_measure: int):
@@ -92,11 +94,44 @@ func _on_transition_triggered(measure_number: int, marker_name: StringName):
 	if target_index >= 0 and target_index < offsets.size():
 		var target_time_seconds = offsets[target_index]
 		
-		# Teleport the audio player
-		audio_player.seek(target_time_seconds)
-		
 		# Update loop bounds (example: loop next 4 measures)
 		var end_measure = offsets.size() # or audio_clock.get_num_measures() + 1
 		audio_clock.set_loop_bounds_measure(target_destination_measure, end_measure)
 		
+		# Spawn the new audio player and crossfade!
+		_spawn_new_audio_player(target_time_seconds, 1.5) # 1.5 second crossfade
+		
 		target_destination_measure = -1
+
+func _spawn_new_audio_player(start_time: float, fade_duration: float):
+	# Create a brand new AudioStreamPlayer
+	var new_audio_player: AudioStreamPlayer = AudioStreamPlayer.new()
+	new_audio_player.stream = current_audio_stream
+	add_child(new_audio_player) # Add it to the scene tree
+	
+	# Tell the audio clock to watch this new audio player
+	audio_clock.set_audio_player_path(new_audio_player.get_path())
+	# Crossfade (and set the new player to be active)
+	active_audio_player = _crossfade_between_streams(new_audio_player, start_time, fade_duration)
+
+func _crossfade_between_streams(audio_player: AudioStreamPlayer, start_time: float, fade_duration: float):
+	if fade_duration > 0.0:
+		audio_player.volume_db = -80.0
+		audio_player.play(start_time)
+		
+		var tween = create_tween().set_parallel(true)
+		# Fade new audio player IN
+		tween.tween_property(audio_player, "volume_db", 0.0, fade_duration)
+		
+		# Fade old audio player OUT, then delete it to free memory
+		if active_audio_player != null:
+			tween.tween_property(active_audio_player, "volume_db", -80.0, fade_duration)
+			tween.chain().tween_callback(active_audio_player.queue_free)
+	else:
+		# INSTANT PLAY
+		audio_player.volume_db = 0.0
+		audio_player.play(start_time)
+		if active_audio_player != null:
+			active_audio_player.queue_free()
+	
+	return audio_player

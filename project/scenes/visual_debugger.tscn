@@ -13,19 +13,29 @@ script = ExtResource("1_jykpe")
 
 [node name="TimeLabel" type="Label" parent="." unique_id=1026882526]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_left = 7.0
+offset_top = 42.0
+offset_right = 152.0
+offset_bottom = 65.0
 text = "Measure: -- Beat: --"
+
+[node name="NextCueLabel" type="Label" parent="." unique_id=920556772]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 7.0
+offset_right = 125.0
+offset_bottom = 30.0
+text = "Upcoming Cue: "
 
 [node name="BeatFlash" type="ColorRect" parent="." unique_id=1945841683]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.011000001
-anchor_top = 0.060000002
-anchor_right = 0.055000003
-anchor_bottom = 0.13700001
-offset_left = 0.32799911
-offset_top = 0.11999893
-offset_right = -0.36000443
-offset_bottom = 0.2239914
+anchor_top = 0.120000005
+anchor_right = 0.052
+anchor_bottom = 0.19800001
+offset_left = -2.672001
+offset_top = 0.23999786
+offset_right = 0.09600067
+offset_bottom = -0.3040161
