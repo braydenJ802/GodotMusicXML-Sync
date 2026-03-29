@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bqpbd40v5d1wc"]
 
-[ext_resource type="Script" uid="uid://7n46dnp2m3ac" path="res://scenes/music_director.gd" id="1_qkmj8"]
+[ext_resource type="Script" uid="uid://7n46dnp2m3ac" path="res://scenes/music_director/music_director.gd" id="1_qkmj8"]
 
 [sub_resource type="SongData" id="SongData_0xm2m"]
 bpm_map = PackedFloat32Array(120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 140, 140, 140, 140, 140, 140)

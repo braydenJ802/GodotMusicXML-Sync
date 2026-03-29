@@ -46,8 +46,6 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
         UtilityFunctions::push_error("Failed to open XML buffer.");
         return data; // Return empty
     }
-    // Pass the array object to the parser
-    parser->open_buffer(bytes);
 
 
     // =================================================================
@@ -209,11 +207,23 @@ Ref<SongData> MusicXMLParser::parse_text(const String &xml_text) const
 
     UtilityFunctions::print("---- Parsing & Sync Complete. Total Time: ", total_time, "s ----");
 
+    // Convert std::vector<int> -> PackedInt32Array
+    PackedInt32Array beats_per_measure;
+    beats_per_measure.resize((int)beats_per_measure_array.size());
+    //UtilityFunctions::print("beats_per_measure size: ", beats_per_measure.size());
+    for (int i = 0; i < (int)beats_per_measure_array.size(); i++)
+    {
+        beats_per_measure.set(i, beats_per_measure_array[i]);
+        //UtilityFunctions::print("measure ", i + 1, " beats: ", beats_per_measure[i]);
+    }
 
     // SAVE DATA TO RESOURCE
     data->set_measure_offsets(measure_offsets);
     data->set_bpm_map(bpm_map);
+    data->set_beats_per_measure(beats_per_measure);
     // cues already saved
+
+    //UtilityFunctions::print("SONGDATA stored beats_per_measure size: ", data->get_beats_per_measure().size());
 
     return data;
 }

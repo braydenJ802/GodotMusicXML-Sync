@@ -11,6 +11,10 @@ void SongData::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_measure_offsets"), &SongData::get_measure_offsets);
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_FLOAT32_ARRAY, "measure_offsets"), "set_measure_offsets", "get_measure_offsets");
 
+    ClassDB::bind_method(D_METHOD("set_beats_per_measure", "v"), &SongData::set_beats_per_measure);
+    ClassDB::bind_method(D_METHOD("get_beats_per_measure"), &SongData::get_beats_per_measure);
+    ADD_PROPERTY(PropertyInfo(Variant::PACKED_INT32_ARRAY, "beats_per_measure"), "set_beats_per_measure", "get_beats_per_measure");
+
     ClassDB::bind_method(D_METHOD("set_cues_by_measure", "cues"), &SongData::set_cues_by_measure);
     ClassDB::bind_method(D_METHOD("get_cues_by_measure"), &SongData::get_cues_by_measure);
     ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "cues_by_measure"), "set_cues_by_measure", "get_cues_by_measure");

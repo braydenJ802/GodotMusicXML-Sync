@@ -2,6 +2,7 @@
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
+#include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/string_name.hpp>
 
@@ -12,6 +13,7 @@ class SongData : public Resource {
 
     PackedFloat32Array bpm_map;
     PackedFloat32Array measure_offsets;
+    PackedInt32Array beats_per_measure;
     Dictionary cues_by_measure;        // Key: int (Measure) -> Value: Array[String]
     Dictionary cues_by_name;           // Key: String (Name) -> Value: Array[int]
 
@@ -24,6 +26,9 @@ public:
 
     void set_measure_offsets(const PackedFloat32Array &v) { measure_offsets = v; }
     PackedFloat32Array get_measure_offsets() const { return measure_offsets; }
+
+    void set_beats_per_measure(const PackedInt32Array &v) { beats_per_measure = v; }
+    PackedInt32Array get_beats_per_measure() const { return beats_per_measure; }
 
     void set_cues_by_measure(const Dictionary &p_cues) { cues_by_measure = p_cues; }
     Dictionary get_cues_by_measure() const { return cues_by_measure; }

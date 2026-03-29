@@ -34,7 +34,8 @@ public:
     void set_audio_player_path(const NodePath &p_path);
     NodePath get_audio_player_path() const;
 
-    void start();
+    void start(double p_start_time);
+    void resume();
     void stop();
     bool is_running() const;
     bool is_looping() const;

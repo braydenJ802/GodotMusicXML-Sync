@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://c5ge6t67bv43c"]
+
+[node name="MusicalDisplay" type="HBoxContainer" unique_id=1515604487]
+anchors_preset = -1
+anchor_right = 0.17300001
+anchor_bottom = 0.07700001
+offset_right = -0.29600525
+offset_bottom = 0.10399628
+
+[node name="BeatFlash" type="ColorRect" parent="." unique_id=485566280]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+color = Color(0.9609464, 0.80666786, 0.9223415, 1)
+
+[node name="MusicalDetails" type="VBoxContainer" parent="." unique_id=907773527]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TimeLabel" type="Label" parent="MusicalDetails" unique_id=957319764]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Measure: -- Beat: --"
+
+[node name="NextCueLabel" type="Label" parent="MusicalDetails" unique_id=2072422598]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Upcoming Cue: "

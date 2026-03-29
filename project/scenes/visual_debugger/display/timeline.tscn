@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://bf4qrn1mdpeuc"]
+
+[node name="TimelinePanel" type="PanelContainer" unique_id=360046728]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -504.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="TimelineVBox" type="VBoxContainer" parent="." unique_id=933934736]
+layout_mode = 2
+
+[node name="TimelineTrack" type="ColorRect" parent="TimelineVBox" unique_id=69147897]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.2592937, 0.2592937, 0.2592937, 1)
+
+[node name="StemInstrument1" type="ColorRect" parent="TimelineVBox" unique_id=885343380]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+color = Color(0.631641, 0.26807597, 0.33066925, 1)
+
+[node name="Label" type="Label" parent="TimelineVBox/StemInstrument1" unique_id=2028279586]
+layout_mode = 0
+offset_left = 6.0
+offset_right = 62.0
+offset_bottom = 23.0
+text = "Layer 1"
+
+[node name="MuteButton1" type="CheckButton" parent="TimelineVBox/StemInstrument1" unique_id=1388428868]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 5.0
+offset_top = 24.0
+offset_right = 49.0
+offset_bottom = 48.0
+
+[node name="StemInstrument2" type="ColorRect" parent="TimelineVBox" unique_id=471079776]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+color = Color(0.2812545, 0.26746133, 0.68957126, 1)
+
+[node name="Label" type="Label" parent="TimelineVBox/StemInstrument2" unique_id=908416115]
+layout_mode = 0
+offset_left = 7.0
+offset_right = 63.0
+offset_bottom = 23.0
+text = "Layer 2"
+
+[node name="MuteButton2" type="CheckButton" parent="TimelineVBox/StemInstrument2" unique_id=506094243]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 5.0
+offset_top = 25.0
+offset_right = 49.0
+offset_bottom = 49.0
+
+[node name="StemInstrument3" type="ColorRect" parent="TimelineVBox" unique_id=1577129856]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+color = Color(0.99736935, 0.69551516, 0.65750074, 1)
+
+[node name="Label" type="Label" parent="TimelineVBox/StemInstrument3" unique_id=1088195579]
+layout_mode = 0
+offset_left = 7.0
+offset_right = 63.0
+offset_bottom = 23.0
+text = "Layer 3"
+
+[node name="MuteButton3" type="CheckButton" parent="TimelineVBox/StemInstrument3" unique_id=717786039]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 5.0
+offset_top = 26.0
+offset_right = 49.0
+offset_bottom = 50.0
+
+[node name="PlayHead" type="ColorRect" parent="." unique_id=2034755006]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(2, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+color = Color(0.26027775, 0.4448188, 0.8340234, 1)

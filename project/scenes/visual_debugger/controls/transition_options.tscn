@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://d1prkbkp71tyt"]
+
+[node name="TransitionOptions" type="HBoxContainer" unique_id=2135947206]
+offset_left = 6.0
+offset_top = 87.0
+offset_right = 463.0
+offset_bottom = 127.0
+
+[node name="CueSelectionLabel" type="Label" parent="." unique_id=793903446]
+layout_mode = 2
+text = "Cue Trigger:"
+
+[node name="CueSelect" type="OptionButton" parent="." unique_id=844827595]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="QueuedTransitionLabel" type="Label" parent="." unique_id=2036917527]
+layout_mode = 2
+text = "Jump To Measure:"
+
+[node name="QueuedDestinationSpinBox" type="SpinBox" parent="." unique_id=752828356]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="QueueJumpButton" type="Button" parent="." unique_id=1180305081]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "Queue Jump"
+
+[node name="VSeparator" type="VSeparator" parent="." unique_id=1805905789]
+layout_mode = 2
+
+[node name="ImmediateTransitionLabel" type="Label" parent="." unique_id=1852216999]
+layout_mode = 2
+text = "Jump To Measure"
+
+[node name="ImmediateDestinationSpinBox" type="SpinBox" parent="." unique_id=807281607]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ImmediateJumpButton" type="Button" parent="." unique_id=1196687612]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "Immediate Jump"
