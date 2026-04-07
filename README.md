@@ -238,7 +238,7 @@ The included debugger currently exposes:
 ## Additional Resources
 
 ### Documentation
- - [Markdown Docs](./docs/markdown/godotmusicxmlsync_md_docs)
+ - [Markdown Docs](./docs/markdown/godotmusicxmlsync_md_docs.md)
  - [Architecture Diagram](./docs/images/class-diagram.png)
 
 ### Music
