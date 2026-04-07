@@ -242,7 +242,11 @@ func request_jump_to_cue_from_marker(wait_marker: StringName, destination_marker
 		push_error("MusicDirector: Could not resolve trigger cue: " + str(wait_marker))
 		return
 	
-	var destination_measure: int = get_best_measure_for_cue(destination_marker, jump_back, trigger_measure)
+	var search_from_measure: int = trigger_measure
+	if jump_back:
+		search_from_measure = max(1, trigger_measure - 1)
+	
+	var destination_measure: int = get_best_measure_for_cue(destination_marker, jump_back, search_from_measure)
 	if destination_measure <= 0:
 		push_error("MusicDirector: Could not resolve destination cue: " + str(destination_marker))
 		return
