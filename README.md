@@ -236,8 +236,8 @@ The included debugger currently exposes:
 - **Dynamic layer mute toggles**
 
 ### Demo Video
-[![Watch the Demo](./docs/video_demo/GodotMusicXML_demo_thumbnail.png)](./docs/video_demo/GodotMusicXML-SyncDEMO.mp4)
-[Demo](./docs/video_demo/GodotMusicXML-SyncDEMO.mp4)
+[![Watch the Demo](./docs/video_demo/GodotMusicXML_demo_thumbnail.png)](https://youtu.be/-2Asy_uxBqI)
+[Demo](https://youtu.be/-2Asy_uxBqI)
 
 ## Additional Resources
 
