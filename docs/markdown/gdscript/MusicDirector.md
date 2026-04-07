@@ -120,18 +120,24 @@ If `jump_back` is `true`, repeated cue names resolve to the nearest previous occ
 ### `request_jump_to_cue_from_marker(wait_marker: StringName, destination_marker: StringName, style: int = -1, jump_back: bool = false) -> void`
 Queues a cue-triggered jump whose destination is also resolved from a cue name.
 
+For queued cue-to-cue transitions, the destination cue is resolved relative to the trigger point's measure, rather than the current playback position, so repeated cue names advance or rewind correctly.
+
 ### `request_immediate_jump_to_cue(destination_marker: StringName, style: int = -1, jump_back: bool = false) -> void`
 Immediately jumps to a destination cue resolved relative to the current playback position.
+
+By default this resolves to the nearest forward occurrence. If `jump_back` is `true`, it resolves to the nearest previous occurrence.
 
 ### `set_default_transition_style(style_name: String) -> void`
 Sets the default transition style used by future requests when no explicit override is provided.
 
 Supported names are `"crossfade"` and `"seamless"`.
 
-### `get_best_measure_for_cue(cue_name: StringName, prefer_forward: bool = true) -> int`
-Resolves a cue name to the best matching destination measure relative to the current song position.
+### `get_best_measure_for_cue(cue_name: StringName, jump_back: bool = false, search_from_measure: int = -1) -> int`
+Resolves a cue name to the best matching destination measure relative to a given
+search measure, or the current song position if none is provided.
 
-By default this prefers the nearest forward occurrence. If `prefer_forward` is `false`, it prefers the nearest previous occurrence.
+By default this prefers the nearest forward occurrence. If `jump_back`
+is `true`, it prefers the nearest previous occurrence.
 
 ### `set_layer_mute(index: int, is_muted: bool) -> void`
 Smoothly mutes or unmutes a specific synchronized stem layer.

@@ -83,7 +83,7 @@ signal transition_style_changed(style_name: String)
 ## Button that applies the current loop settings.
 @onready var apply_loop_button: Button = $PlayerOptions/%ApplyLoopButton
 ## Dropdown for selecting the default transition style.
-@onready var transition_style_select: OptionButton = $PlayerOptions/%TransitionStyleSelect
+@onready var transition_style_select: OptionButton = $TransitionOptions/%TransitionStyleSelect
 
 ## Dropdown for selecting which song preset is currently active.
 @onready var song_select: OptionButton = $SongOptions/%SongSelect

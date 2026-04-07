@@ -226,26 +226,39 @@ func request_immediate_jump_to_measure(destination_measure: int, style: int = -1
 ## If [param jump_back] is [code]true[/code], repeated cue names resolve to the
 ## nearest previous occurrence. Otherwise they resolve to the nearest forward occurrence.
 func request_jump_to_cue_from_measure(wait_for_measure: int, destination_marker: StringName, style: int = -1, jump_back: bool = false):
-	var destination_measure: int = get_best_measure_for_cue(destination_marker, not jump_back)
+	var destination_measure: int = get_best_measure_for_cue(destination_marker, jump_back, wait_for_measure)
 	if destination_measure <= 0:
 		push_error("MusicDirector: Could not resolve destination cue: " + str(destination_marker))
 		return
 	request_jump_to_measure(wait_for_measure, destination_measure, style)
 
 ## Queues a cue-triggered jump whose destination is also resolved from a cue name.
+## For queued cue-to-cue transitions, the destination cue is resolved
+## relative to the trigger point's measure, rather than the current playback position, 
+## so repated cue names advance or rewind correctly.
 func request_jump_to_cue_from_marker(wait_marker: StringName, destination_marker: StringName, style: int = -1, jump_back: bool = false):
-	var destination_measure: int = get_best_measure_for_cue(destination_marker, not jump_back)
+	var trigger_measure: int = get_best_measure_for_cue(wait_marker, false)
+	if trigger_measure <= 0:
+		push_error("MusicDirector: Could not resolve trigger cue: " + str(wait_marker))
+		return
+	
+	var destination_measure: int = get_best_measure_for_cue(destination_marker, jump_back, trigger_measure)
 	if destination_measure <= 0:
 		push_error("MusicDirector: Could not resolve destination cue: " + str(destination_marker))
 		return
+	
 	request_jump_to_marker(wait_marker, destination_measure, style)
 
 ## Immediately jumps to a destination cue resolved relative to the current playback position.
+##
+## By default this resolves to the nearest forward occurrence. If [param jump_back] is [code]true[/code], 
+## it resolves to the nearest previous occurrence.
 func request_immediate_jump_to_cue(destination_marker: StringName, style: int = -1, jump_back: bool = false):
-	var destination_measure: int = get_best_measure_for_cue(destination_marker, not jump_back)
+	var destination_measure: int = get_best_measure_for_cue(destination_marker, jump_back)
 	if destination_measure <= 0:
 		push_error("MusicDirector: Could not resolve destination cue: " + str(destination_marker))
 		return
+	
 	request_immediate_jump_to_measure(destination_measure, style)
 
 ## Sets the default transition style used by future requests when no explicit override is provided.
@@ -258,11 +271,12 @@ func set_default_transition_style(style_name: String) -> void:
 		_:
 			default_transition_style = TransitionStyle.CROSSFADE
 
-## Resolves a cue name to the best matching destination measure relative to the current song position.
+## Resolves a cue name to the best matching destination measure relative to a given
+## search measure, or the current song position if none is provided.
 ##
-## By default this prefers the nearest forward occurrence. If [param prefer_forward]
-## is [code]false[/code], it prefers the nearest previous occurrence.
-func get_best_measure_for_cue(cue_name: StringName, prefer_forward: bool = true) -> int:
+## By default this prefers the nearest forward occurrence. If [param jump_back]
+## is [code]true[/code], it prefers the nearest previous occurrence.
+func get_best_measure_for_cue(cue_name: StringName, jump_back: bool = false, search_from_measure: int = -1) -> int:
 	if song_data == null:
 		return -1
 
@@ -275,7 +289,9 @@ func get_best_measure_for_cue(cue_name: StringName, prefer_forward: bool = true)
 		return -1
 
 	# current song position is 1-based from the clock
-	var current_measure_1_based: int = max(1, int(audio_clock.get_current_measure()))
+	var current_measure_1_based: int = search_from_measure
+	if current_measure_1_based <= 0:
+		current_measure_1_based = max(1, int(audio_clock.get_current_measure()))
 	var current_measure_0_based: int = current_measure_1_based - 1
 
 	var sorted_measures: Array[int] = []
@@ -283,19 +299,18 @@ func get_best_measure_for_cue(cue_name: StringName, prefer_forward: bool = true)
 		sorted_measures.append(int(m))
 	sorted_measures.sort()
 
-	if prefer_forward:
+	if not jump_back: # prefer forward by default
 		for m in sorted_measures:
 			if m > current_measure_0_based:
 				return m + 1
-
-		# fallback if nothing forward exists
+		# Wrap to the first occurrence
 		return sorted_measures[0] + 1
 	else:
 		for i in range(sorted_measures.size() - 1, -1, -1):
-			if sorted_measures[i] < current_measure_0_based:
+			if sorted_measures[i] <= current_measure_0_based:
 				return sorted_measures[i] + 1
 
-		# fallback if nothing backward exists
+		# Wrap to last occurence
 		return sorted_measures[sorted_measures.size() - 1] + 1
 
 # Muting Layers
