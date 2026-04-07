@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://batvyx4sy3v0a"]
+
+[node name="MuteLayers" type="VBoxContainer" unique_id=545956078]
+anchors_preset = -1
+anchor_right = 1.001
+anchor_bottom = 0.123
+offset_right = -0.15209961
+offset_bottom = 0.29599762
+grow_horizontal = 2
+grow_vertical = 2

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="SongData" inherits="Resource" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Data container for musical timing and structure.
+		Stores parsed musical timing and structural data for a song.
 	</brief_description>
 	<description>
-		A resource that holds the parsed data from a MusicXML file, including tempo changes, measure start times, and structural cue points. This resource is used by [AudioClock] to translate time into musical context.
+		A [Resource] that holds the parsed output of a MusicXML file. This includes tempo data, measure start times, beats-per-measure information, and cue markers. [AudioClock], [TransitionManager], and higher-level playback scripts use this data to convert raw playback time into musical context.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -14,22 +14,25 @@
 			<param index="0" name="name" type="StringName" />
 			<param index="1" name="measure_index" type="int" />
 			<description>
-				Registers a new cue point. This updates both the measure-based and name-based lookup dictionaries to ensure data consistency.
+				Adds a cue marker at [param measure_index]. This updates both [member cues_by_measure] and [member cues_by_name] so the cue can be resolved efficiently in either direction.
 			</description>
 		</method>
 	</methods>
 	<members>
+		<member name="beats_per_measure" type="PackedInt32Array" setter="set_beats_per_measure" getter="get_beats_per_measure" default="PackedInt32Array()">
+			Stores the number of beats in each measure. This is primarily the time-signature numerator for each measure and is used by the clock to emit correct beat events.
+		</member>
 		<member name="bpm_map" type="PackedFloat32Array" setter="set_bpm_map" getter="get_bpm_map" default="PackedFloat32Array()">
-			An array storing the BPM value active at each measure.
+			Stores the BPM value active at each measure.
 		</member>
 		<member name="cues_by_measure" type="Dictionary" setter="set_cues_by_measure" getter="get_cues_by_measure" default="{}">
-			Lookup dictionary mapping [code]Measure Index (int)[/code] to [code]List of Cue Names (Array[String])[/code]. Used by AudioClock for O(1) realtime checks.
+			Lookup dictionary mapping internal 0-based measure indices to arrays of cue names found at those measure starts.
 		</member>
 		<member name="cues_by_name" type="Dictionary" setter="set_cues_by_name" getter="get_cues_by_name" default="{}">
-			Lookup dictionary mapping [code]Cue Name (String)[/code] to [code]List of Measure Indices (Array[int])[/code]. Used by TransitionManager to find jump targets.
+			Lookup dictionary mapping cue names to arrays of internal 0-based measure indices where those cues occur.
 		</member>
 		<member name="measure_offsets" type="PackedFloat32Array" setter="set_measure_offsets" getter="get_measure_offsets" default="PackedFloat32Array()">
-			An array storing the exact start time (in seconds) for every measure in the song.
+			Stores the exact start time in seconds for each measure, plus a final fencepost entry representing the end of the song.
 		</member>
 	</members>
 </class>

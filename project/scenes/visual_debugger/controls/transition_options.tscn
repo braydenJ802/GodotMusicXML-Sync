@@ -1,45 +1,105 @@
 [gd_scene format=3 uid="uid://d1prkbkp71tyt"]
 
-[node name="TransitionOptions" type="HBoxContainer" unique_id=2135947206]
+[node name="TransitionOptions" type="VBoxContainer" unique_id=1005565935]
 offset_left = 6.0
 offset_top = 87.0
-offset_right = 463.0
-offset_bottom = 127.0
+offset_right = 641.0
+offset_bottom = 153.0
 
-[node name="CueSelectionLabel" type="Label" parent="." unique_id=793903446]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=334197516]
 layout_mode = 2
-text = "Cue Trigger:"
+alignment = 2
 
-[node name="CueSelect" type="OptionButton" parent="." unique_id=844827595]
+[node name="JumpBackCheckBox" type="CheckBox" parent="HBoxContainer" unique_id=2016604410]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Jump Back"
+
+[node name="TransitionStyleSelect" type="OptionButton" parent="HBoxContainer" unique_id=874893415]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+item_count = 2
+popup/item_0/text = "Crossfade"
+popup/item_0/id = 0
+popup/item_1/text = "Seamless"
+popup/item_1/id = 1
+
+[node name="TriggerAndQueuedHBox" type="HBoxContainer" parent="." unique_id=1795271697]
+layout_mode = 2
+
+[node name="TriggerLabel" type="Label" parent="TriggerAndQueuedHBox" unique_id=793903446]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Trigger:"
+
+[node name="TriggerTypeSelect" type="OptionButton" parent="TriggerAndQueuedHBox" unique_id=844827595]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="QueuedTransitionLabel" type="Label" parent="." unique_id=2036917527]
-layout_mode = 2
-text = "Jump To Measure:"
-
-[node name="QueuedDestinationSpinBox" type="SpinBox" parent="." unique_id=752828356]
+[node name="TriggerCueSelect" type="OptionButton" parent="TriggerAndQueuedHBox" unique_id=162985338]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="QueueJumpButton" type="Button" parent="." unique_id=1180305081]
+[node name="TriggerMeasureSpinBox" type="SpinBox" parent="TriggerAndQueuedHBox" unique_id=548260415]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DestinationLabel" type="Label" parent="TriggerAndQueuedHBox" unique_id=2036917527]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Jump To: "
+
+[node name="DestinationTypeSelect" type="OptionButton" parent="TriggerAndQueuedHBox" unique_id=121465304]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 2
+popup/item_0/text = "Measure"
+popup/item_0/id = 0
+popup/item_1/text = "Cue"
+popup/item_1/id = 1
+
+[node name="DestinationMeasureSpinBox" type="SpinBox" parent="TriggerAndQueuedHBox" unique_id=752828356]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DestinationCueSelect" type="OptionButton" parent="TriggerAndQueuedHBox" unique_id=1616836638]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="QueueJumpButton" type="Button" parent="TriggerAndQueuedHBox" unique_id=1180305081]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 text = "Queue Jump"
 
-[node name="VSeparator" type="VSeparator" parent="." unique_id=1805905789]
+[node name="ImmediateHBox" type="HBoxContainer" parent="." unique_id=1352549802]
 layout_mode = 2
 
-[node name="ImmediateTransitionLabel" type="Label" parent="." unique_id=1852216999]
+[node name="ImmediateTransitionLabel" type="Label" parent="ImmediateHBox" unique_id=1852216999]
+unique_name_in_owner = true
 layout_mode = 2
-text = "Jump To Measure"
+text = "Immediate Jump: "
 
-[node name="ImmediateDestinationSpinBox" type="SpinBox" parent="." unique_id=807281607]
+[node name="ImmediateDestinationTypeSelect" type="OptionButton" parent="ImmediateHBox" unique_id=754416325]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 2
+popup/item_0/text = "Measure"
+popup/item_0/id = 0
+popup/item_1/text = "Cue"
+popup/item_1/id = 1
+
+[node name="ImmediateDestinationMeasureSpinBox" type="SpinBox" parent="ImmediateHBox" unique_id=807281607]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ImmediateJumpButton" type="Button" parent="." unique_id=1196687612]
+[node name="ImmediateDestinationCueSelect" type="OptionButton" parent="ImmediateHBox" unique_id=268088806]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ImmediateJumpButton" type="Button" parent="ImmediateHBox" unique_id=1196687612]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2

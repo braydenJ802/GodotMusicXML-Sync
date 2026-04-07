@@ -1,24 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="AudioClock" inherits="Node" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Synchronizes game logic to audio playback time.
+		Synchronizes musical game logic to live audio playback time.
 	</brief_description>
 	<description>
-		The AudioClock monitors an [AudioStreamPlayer] and tracks the musical position (Measures and Beats) based on data provided by a [SongData] resource. It handles synchronization between the audio hardware clock and the game loop, and emits signals when musical events occur.
+		The AudioClock monitors an [AudioStreamPlayer] and translates playback time into musical position using data provided by a [SongData] resource. It tracks the current measure and beat, supports measure-based looping, and emits signals when beat, measure, marker, and loop events occur. When an audio player is connected, the clock follows the player's playback position rather than relying on frame delta time.
 	</description>
 	<tutorials>
 	</tutorials>
 	<methods>
+		<method name="clear_loop">
+			<return type="void" />
+			<description>
+				Disables looping and clears any active loop bounds.
+			</description>
+		</method>
+		<method name="get_current_measure" qualifiers="const">
+			<return type="int" />
+			<description>
+				Returns the current measure number using 1-based numbering for public-facing use.
+			</description>
+		</method>
 		<method name="get_num_measures" qualifiers="const">
 			<return type="float" />
 			<description>
-				Returns the total number of measures defined in the loaded [SongData].
+				Returns the total number of measures defined by the loaded [SongData].
 			</description>
 		</method>
 		<method name="get_song_time" qualifiers="const">
 			<return type="float" />
 			<description>
-				Returns the current playback position in seconds. If the clock is synced to an AudioStreamPlayer, this reflects the audio DSP time; otherwise, it reflects an internal timer.
+				Returns the current playback position in seconds. When synchronized to an [AudioStreamPlayer], this reflects the active audio playback position.
 			</description>
 		</method>
 		<method name="is_looping" qualifiers="const">
@@ -30,7 +42,13 @@
 		<method name="is_running" qualifiers="const">
 			<return type="bool" />
 			<description>
-				Returns [code]true[/code] if the clock is currently processing time.
+				Returns [code]true[/code] if the clock is currently advancing and emitting musical events.
+			</description>
+		</method>
+		<method name="resume">
+			<return type="void" />
+			<description>
+				Resumes the clock without resetting the current playback position, measure, or beat state.
 			</description>
 		</method>
 		<method name="set_loop_bounds_measure">
@@ -38,7 +56,7 @@
 			<param index="0" name="start" type="int" />
 			<param index="1" name="end" type="int" />
 			<description>
-				Sets the loop points using Measure indices. The clock will look up the corresponding timestamps from [member song_data] and enable looping.
+				Sets the loop section using 1-based measure numbers. When playback reaches the end measure boundary, the clock emits [signal loop_occurred] with the loop restart time.
 			</description>
 		</method>
 		<method name="set_loop_bounds_time">
@@ -46,47 +64,54 @@
 			<param index="0" name="start" type="float" />
 			<param index="1" name="end" type="float" />
 			<description>
-				Sets the loop points using raw time (in seconds). When the song time reaches [param end], it will seek back to [param start].
+				Sets the loop section directly using time values in seconds.
 			</description>
 		</method>
 		<method name="start">
 			<return type="void" />
+			<param index="0" name="time_offset" type="float" />
 			<description>
-				Starts the clock. Resets internal timers if no AudioStreamPlayer is connected.
+				Starts the clock from [param time_offset] seconds. This resets internal beat and measure tracking so playback can begin cleanly from a new position.
 			</description>
 		</method>
 		<method name="stop">
 			<return type="void" />
 			<description>
-				Stops the clock. No signals will be emitted while stopped.
+				Stops the clock. No beat, measure, marker, or loop signals will be emitted while stopped.
 			</description>
 		</method>
 	</methods>
 	<members>
 		<member name="audio_player_path" type="NodePath" setter="set_audio_player_path" getter="get_audio_player_path" default="NodePath(&quot;&quot;)">
-			Path to the [AudioStreamPlayer] node that this clock should synchronize with.
+			Path to the [AudioStreamPlayer] node this clock should monitor for live playback position.
 		</member>
 		<member name="song_data" type="SongData" setter="set_song_data" getter="get_song_data">
-			The [SongData] resource containing the BPM map, measure offsets, and cue points for the current track.
+			The [SongData] resource containing the tempo map, measure offsets, beat counts, and cue markers for the current song.
 		</member>
 	</members>
 	<signals>
 		<signal name="beat">
 			<param index="0" name="beat_number" type="int" />
 			<description>
-				Emitted every time the clock detects a new beat.
+				Emitted when the clock enters a new beat. Beat numbers are emitted using 1-based numbering.
+			</description>
+		</signal>
+		<signal name="loop_occurred">
+			<param index="0" name="new_time" type="float" />
+			<description>
+				Emitted when playback reaches the loop end point and should return to [param new_time].
 			</description>
 		</signal>
 		<signal name="marker_passed">
 			<param index="0" name="marker_name" type="StringName" />
 			<description>
-				Emitted when the playback position crosses a measure that contains a specific Cue or Section marker.
+				Emitted when playback enters a measure that contains a parsed cue or rehearsal marker.
 			</description>
 		</signal>
 		<signal name="measure">
 			<param index="0" name="measure_number" type="int" />
 			<description>
-				Emitted every time the clock enters a new measure.
+				Emitted when the clock enters a new measure. Measure numbers are emitted using 1-based numbering.
 			</description>
 		</signal>
 	</signals>

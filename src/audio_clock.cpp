@@ -28,6 +28,7 @@ void AudioClock::_bind_methods()
 
     ClassDB::bind_method(D_METHOD("get_song_time"), &AudioClock::get_song_time);
     ClassDB::bind_method(D_METHOD("get_num_measures"), &AudioClock::get_num_measures);
+    ClassDB::bind_method(D_METHOD("get_current_measure"), &AudioClock::get_current_measure);
     ClassDB::bind_method(D_METHOD("set_loop_bounds_time", "start", "end"), &AudioClock::set_loop_bounds_time);
     ClassDB::bind_method(D_METHOD("set_loop_bounds_measure", "start", "end"), &AudioClock::set_loop_bounds_measure);
     ClassDB::bind_method(D_METHOD("clear_loop"), &AudioClock::clear_loop);
@@ -102,6 +103,11 @@ double AudioClock::get_num_measures() const
     return num_measures;
 }
 
+int AudioClock::get_current_measure() const
+{
+    return current_measure + 1; // current_measure is stored internally as 0-based
+}
+
 void AudioClock::set_loop_bounds_time(double p_start_time, double p_end_time) 
 {
     loop_start_time = p_start_time;
@@ -149,35 +155,35 @@ void AudioClock::_process(double delta)
     bool is_node_valid = (node != nullptr && node->is_inside_tree() && !node->is_queued_for_deletion());
     AudioStreamPlayer* audio_player = is_node_valid ? Object::cast_to<AudioStreamPlayer>(node) : nullptr; // safe cast to AudioStreamPlayer node
 
-    if (audio_player)
+    if (audio_player && audio_player->is_playing()) 
     {
-        if (audio_player->is_playing()) 
-        {
-            // Get the exact time from the audio thread
-            song_time = audio_player->get_playback_position();
-        }
-        else 
-        {
-            // --- End of Song Check ---
-            // If the player is not playing, AND we have valid song data,
-            // it probably means the song has finished.
-            if (song_data.is_valid()) {
-                PackedFloat32Array offsets = song_data->get_measure_offsets();
-                // The last entry in offsets is the "End of Song" time.
-                if (offsets.size() > 0)
-                    song_time = offsets[offsets.size() - 1];
-            }
+        // Get the exact time from the audio thread
+        double playback_position = audio_player->get_playback_position();
 
-            running = false;
-            UtilityFunctions::print("AudioClock: Song finished, stopping clock.");
-            return;
+        if (song_data.is_valid())
+        {
+            PackedFloat32Array offsets = song_data->get_measure_offsets();
+            if (offsets.size() > 0)
+            {
+                // The last entry in offsets is the "End of Song" time.
+                double end_time = offsets[offsets.size() - 1];
+
+                // If playback position suddenly jumps backward near the end,
+                // treat it as end-of-song instead of wrapping to measure 1.
+                if (!looping &&
+                    playback_position + 0.1 < song_time &&
+                    song_time >= end_time - 0.25)
+                {
+                    song_time = end_time;
+                    running = false;
+                    UtilityFunctions::print("AudioClock: Song finished, stopping clock.");
+                    return;
+                }
+            }
         }
+
+        song_time = playback_position;
     }
-    else
-    {
-        song_time += delta;
-    }
-    
 
     // --- LOOP LOGIC ---
     // We check every frame if the song is over and set it to loop again (if looping is set to true)

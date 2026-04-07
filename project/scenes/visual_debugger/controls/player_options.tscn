@@ -1,22 +1,29 @@
 [gd_scene format=3 uid="uid://p8mdto5e4h4c"]
 
 [node name="PlayerOptions" type="HBoxContainer" unique_id=218920709]
-offset_left = 392.0
-offset_top = 7.0
-offset_right = 1199.0
-offset_bottom = 56.0
+offset_left = 282.0
+offset_top = 13.0
+offset_right = 1140.0
+offset_bottom = 62.0
 size_flags_horizontal = 8
 
 [node name="PlayButton" type="Button" parent="." unique_id=2111362252]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 0)
+custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 text = "Play"
 
 [node name="PauseButton" type="Button" parent="." unique_id=1556983465]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 text = "Pause"
+
+[node name="RestartButton" type="Button" parent="." unique_id=1962810257]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "Restart"
 
 [node name="VSeparator" type="VSeparator" parent="." unique_id=355811011]
 layout_mode = 2

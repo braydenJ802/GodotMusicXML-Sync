@@ -7,23 +7,29 @@ anchor_bottom = 0.07700001
 offset_right = -0.29600525
 offset_bottom = 0.10399628
 
-[node name="BeatFlash" type="ColorRect" parent="." unique_id=485566280]
+[node name="Metronome" type="VBoxContainer" parent="." unique_id=874940423]
+layout_mode = 2
+
+[node name="BeatFlash" type="ColorRect" parent="Metronome" unique_id=485566280]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 color = Color(0.9609464, 0.80666786, 0.9223415, 1)
 
 [node name="MusicalDetails" type="VBoxContainer" parent="." unique_id=907773527]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="TimeLabel" type="Label" parent="MusicalDetails" unique_id=957319764]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 text = "Measure: -- Beat: --"
 
 [node name="NextCueLabel" type="Label" parent="MusicalDetails" unique_id=2072422598]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 text = "Upcoming Cue: "
+autowrap_mode = 3

@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://cs4ot1ap7a03w"]
+
+[node name="SongOptions" type="HBoxContainer" unique_id=795743157]
+anchors_preset = -1
+anchor_right = 0.128
+anchor_bottom = 0.048
+offset_left = 6.0
+offset_top = 4.0
+offset_right = 5.543991
+offset_bottom = 3.896
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SongLabel" type="Label" parent="." unique_id=1925457621]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "Song"
+
+[node name="SongSelect" type="OptionButton" parent="." unique_id=1316749536]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LoadSongButton" type="Button" parent="." unique_id=688450211]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "Load"

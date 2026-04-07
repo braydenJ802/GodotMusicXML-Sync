@@ -42,6 +42,7 @@ public:
 
     double get_song_time() const;
     double get_num_measures() const;
+    int get_current_measure() const;
     void set_loop_bounds_time(double p_start_time, double p_end_time);
     void set_loop_bounds_measure(int p_start_measure, int p_end_measure);
     void clear_loop();

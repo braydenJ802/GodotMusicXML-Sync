@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="MusicXMLParser" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		A utility class for parsing raw MusicXML text into usable game data.
+		Parses raw MusicXML text into structured runtime song data.
 	</brief_description>
 	<description>
-		The MusicXMLParser is responsible for interpreting uncompressed MusicXML files. It scans the XML structure to extract critical synchronization data—including tempo changes, time signatures, measure durations, and text cues—and packages them into a [SongData] resource.
+		The MusicXMLParser reads uncompressed MusicXML text and extracts musical timing and structure into a [SongData] resource. It collects tempo changes, time signatures, cue markers, and measure boundaries, computes precise measure offsets, and stores per-measure beat counts. It also supports basic smoothing of continuous tempo ramps such as accelerando and ritardando.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -13,7 +13,7 @@
 			<return type="SongData" />
 			<param index="0" name="xml_text" type="String" />
 			<description>
-				Parses a string containing MusicXML content. This method runs a linear scan of the XML tags to calculate precise timestamps for every measure and extract "Cue" or "Rehearsal" markers. Returns a new [SongData] resource containing the mapped data.
+				Parses a string of MusicXML content and returns a populated [SongData] resource. The parser extracts tempo, time signature, cue, and measure timing information needed for runtime synchronization and transitions.
 			</description>
 		</method>
 	</methods>
